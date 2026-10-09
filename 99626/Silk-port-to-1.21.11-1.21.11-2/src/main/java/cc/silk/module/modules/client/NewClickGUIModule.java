@@ -1,6 +1,6 @@
 package cc.silk.module.modules.client;
 
-import cc.silk.gui.newgui.NewClickGUI;
+import cc.silk.gui.ClickGuiFactory;
 import cc.silk.module.Category;
 import cc.silk.module.Module;
 import org.lwjgl.glfw.GLFW;
@@ -16,7 +16,7 @@ public class NewClickGUIModule extends Module {
     @Override
     public void onEnable() {
         if (mc.currentScreen == null) {
-            mc.setScreen(new NewClickGUI());
+            mc.setScreen(ClickGuiFactory.create());
         }
         setEnabled(false);
     }

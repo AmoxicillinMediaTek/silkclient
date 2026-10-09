@@ -3,6 +3,7 @@ package cc.silk.module.modules.client;
 import cc.silk.module.Category;
 import cc.silk.module.Module;
 import cc.silk.module.setting.ColorSetting;
+import cc.silk.utils.render.nanovg.NanoVGContext;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -22,7 +23,7 @@ public class KeybindsModule extends Module {
 
     @Override
     public void onEnable() {
-        if (mc.currentScreen == null) {
+        if (mc.currentScreen == null && NanoVGContext.init()) {
             mc.setScreen(new cc.silk.gui.KeybindsScreen());
         }
         setEnabled(false);
@@ -52,4 +53,3 @@ public class KeybindsModule extends Module {
         return accentColor.getValue();
     }
 }
-

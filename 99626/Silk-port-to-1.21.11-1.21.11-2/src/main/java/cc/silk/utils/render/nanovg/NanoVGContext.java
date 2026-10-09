@@ -1,5 +1,6 @@
 package cc.silk.utils.render.nanovg;
 
+import cc.silk.SilkClient;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 
@@ -9,10 +10,14 @@ public class NanoVGContext {
     @Getter
     private static long handle = 0;
     private static boolean initialized = false;
+    private static boolean nativeUnavailable = false;
 
-    public static void init() {
+    public static boolean init() {
         if (initialized && isValid()) {
-            return;
+            return true;
+        }
+        if (nativeUnavailable) {
+            return false;
         }
 
         RenderSystem.assertOnRenderThread();
@@ -21,12 +26,22 @@ public class NanoVGContext {
             cleanup();
         }
 
-        handle = nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        try {
+            handle = nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        } catch (LinkageError error) {
+            nativeUnavailable = true;
+            SilkClient.INSTANCE.getLogger().warn(
+                    "NanoVG native library could not be loaded; the standard ClickGUI will be used instead.",
+                    error);
+            return false;
+        }
+
         if (!isValid()) {
             throw new RuntimeException("Failed to initialize NanoVG");
         }
 
         initialized = true;
+        return true;
     }
 
     public static void reinit() {
@@ -59,4 +74,3 @@ public class NanoVGContext {
         initialized = false;
     }
 }
-
